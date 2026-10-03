@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Life Max">
+<meta name="theme-color" content="#0e0f12">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>Life Max</title>
+<style>
+:root{--bg:#0e0f12;--card:#181a20;--card2:#23262e;--text:#f2f3f5;--muted:#8b909c;--accent:#4ade80;--accent2:#60a5fa;--warn:#f59e0b;--red:#f87171;--line:#2a2e37}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom));min-height:100vh;-webkit-user-select:none;user-select:none;overscroll-behavior-y:none}
+input{-webkit-user-select:text;user-select:text;font-family:inherit}
+button{font-family:inherit;cursor:pointer}
+header{padding:16px 16px 4px;max-width:560px;margin:0 auto}
+h1{font-size:30px;margin:0;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:14px}
+main{padding:0 16px;max-width:560px;margin:0 auto}
+.view{display:none}.view.on{display:block}
+.card{background:var(--card);border-radius:18px;padding:6px 14px;margin:12px 0}
+.card.pad{padding:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);min-height:62px}
+.row:last-child{border-bottom:0}
+.lbl{font-weight:600}.lbl small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:42px;height:42px;border-radius:12px;border:0;background:var(--card2);color:var(--text);font-size:24px;line-height:1}
+.stepper button:active{background:var(--line)}
+.stepper .v{min-width:30px;text-align:center;font-size:21px;font-weight:700;font-variant-numeric:tabular-nums}
+.numwrap{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.num{width:96px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:20px;font-weight:700;text-align:right;padding:0 12px;outline:none}
+.num:focus{border-color:var(--accent)}
+.date{width:auto;min-width:150px;font-size:17px;font-weight:600;color-scheme:dark}
+.seg{display:flex;background:var(--card2);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;color:var(--muted);padding:9px 14px;border-radius:9px;font-size:15px;font-weight:700}
+.seg button.on{background:var(--accent);color:#052e14}
+.seg.small button{padding:6px 11px;font-size:13px}
+.primary{width:100%;height:54px;border:0;border-radius:16px;background:var(--accent);color:#052e14;font-size:18px;font-weight:800;margin:8px 0 4px}
+.primary:active{opacity:.85}
+.ghost{width:100%;height:48px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--text);font-size:16px;font-weight:600;margin:6px 0;display:flex;align-items:center;justify-content:center}
+.ghost.danger{color:var(--red)}
+details summary{list-style:none;color:var(--accent2);font-weight:600;padding:14px 0;cursor:pointer}
+details summary::-webkit-details-marker{display:none}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(14,15,18,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav.tabs button{flex:1;border:0;background:none;color:var(--muted);font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px}
+nav.tabs button.on{color:var(--accent)}
+nav.tabs svg{width:25px;height:25px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.stat{background:var(--card);border-radius:16px;padding:12px 14px}
+.stat .k{color:var(--muted);font-size:12px;font-weight:600}
+.stat .val{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
+.stat .d{font-size:12px;color:var(--muted)}
+.good{color:var(--accent)!important}.bad{color:var(--red)!important}
+.chart{width:100%;height:auto;display:block}
+.grid{stroke:var(--line);stroke-width:1}
+.ax{fill:var(--muted);font-size:10px;font-family:-apple-system,system-ui,sans-serif}
+.vl{fill:var(--text);font-size:10px;font-weight:700;font-family:-apple-system,system-ui,sans-serif}
+.ctitle{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;gap:8px}
+.ctitle b{font-size:16px}.ctitle span{color:var(--muted);font-size:12px;text-align:right}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.empty{color:var(--muted);text-align:center;padding:34px 0;font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;transition:.25s;pointer-events:none;z-index:10;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.entry{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.entry:last-child{border-bottom:0}
+.entry .dt{font-weight:700}.entry .sm{color:var(--muted);font-size:13px;margin-top:2px}
+.hint{background:linear-gradient(135deg,#123d26,#122a3d);border-radius:18px;padding:14px;margin:12px 0;font-size:14px}
+.hint b{display:block;font-size:15px;margin-bottom:4px}
+.warnbox{color:var(--warn)}
+</style>
+</head>
+<body>
+<header><h1 id="htitle">Eintragen</h1><div class="sub" id="hsub"></div></header>
+<main>
+
+<!-- EINTRAGEN -->
+<section class="view on" id="v-add">
+  <div class="hint" id="installHint" hidden>
+    <b>📲 Als App installieren</b>
+    In Safari unten auf <b style="display:inline">Teilen</b> tippen, dann <b style="display:inline">„Zum Home-Bildschirm“</b>. Danach startet Life Max wie eine normale App.
+  </div>
+  <div class="card">
+    <div class="row"><div class="lbl">📅 Datum</div><input type="date" id="date" class="num date"></div>
+    <div class="row"><div class="lbl">⚖️ Gewicht<small id="lastW">morgens, nüchtern</small></div><div class="numwrap"><input id="f-weight" class="num" inputmode="decimal" placeholder="–" autocomplete="off">kg</div></div>
+    <div class="row"><div class="lbl">🕌 Gebete pünktlich<small>von 5</small></div><div class="stepper" data-f="prayers" data-max="5"></div></div>
+    <div class="row"><div class="lbl">🏋️ Gym</div><div class="seg" id="f-gym"><button data-v="1">Ja</button><button data-v="0">Nein</button></div></div>
+    <div class="row"><div class="lbl">⚡ Energy Drinks<small>Ziel: max. 1 pro Woche</small></div><div class="stepper" data-f="energy" data-max="20"></div></div>
+    <div class="row"><div class="lbl">🟫 Snus<small>Portionen</small></div><div class="stepper" data-f="snus" data-max="60"></div></div>
+  </div>
+  <div class="card">
+    <details id="monthly"><summary>📏 Monatlich: Bizeps &amp; Körperfett</summary>
+      <div class="row"><div class="lbl">💪 Bizeps<small>kalt, ohne Pump</small></div><div class="numwrap"><input id="f-biceps" class="num" inputmode="decimal" placeholder="–" autocomplete="off">cm</div></div>
+      <div class="row"><div class="lbl">📉 Körperfett</div><div class="numwrap"><input id="f-bf" class="num" inputmode="decimal" placeholder="–" autocomplete="off">%</div></div>
+    </details>
+  </div>
+  <button class="primary" id="save">Speichern</button>
+  <button class="ghost danger" id="delDay" hidden>Eintrag für diesen Tag löschen</button>
+</section>
+
+<!-- VERLAUF -->
+<section class="view" id="v-stats">
+  <div style="display:flex;justify-content:center;margin-top:10px">
+    <div class="seg small" id="range">
+      <button data-r="30">30 T</button><button data-r="90" class="on">90 T</button><button data-r="365">1 Jahr</button><button data-r="0">Alles</button>
+    </div>
+  </div>
+  <div id="statsOut"></div>
+</section>
+
+<!-- DATEN -->
+<section class="view" id="v-data"><div id="dataOut"></div></section>
+
+</main>
+
+<nav class="tabs">
+  <button data-t="add" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Eintragen</button>
+  <button data-t="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/></svg>Verlauf</button>
+  <button data-t="data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>Daten</button>
+</nav>
+<div class="toast" id="toast"></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script>
+'use strict';
+const KEY='lifemax.v1', DAY=864e5;
+const GOALS={weight:80,weightLabel:'Etappe 80 kg',biceps:38,bf:12.5,prayers:35,energy:1};
+
+// ---------- Daten ----------
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+let data=load();
+if(!localStorage.getItem(KEY+'.seeded')){
+  if(!Object.keys(data).length) data={'2026-10-02':{weight:72,bf:10.4,biceps:33}};
+  save(); localStorage.setItem(KEY+'.seeded','1');
+}
+
+// ---------- Hilfen ----------
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const fmt=s=>{const d=parse(s);return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'};
+const fmtFull=s=>{const d=parse(s);return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()};
+const nf=(v,dg=1)=>(Math.round(v*10**dg)/10**dg).toLocaleString('de-DE',{maximumFractionDigits:dg});
+const today=()=>iso(new Date());
+function mondayOf(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function num(s){if(s==null)return null;s=String(s).trim().replace(',','.');if(!s)return null;const v=parseFloat(s);return isFinite(v)?v:NaN}
+let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),1800)}
+const sorted=()=>Object.keys(data).sort();
+
+// ---------- Tabs ----------
+const TITLES={add:'Eintragen',stats:'Verlauf',data:'Daten'};
+let tab='add';
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.t));
+function show(t){tab=t;
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+t));
+  $('htitle').textContent=TITLES[t];
+  if(t==='stats')renderStats(); if(t==='data')renderData(); if(t==='add')paintSub();
+  window.scrollTo(0,0);
+}
+function paintSub(){$('hsub').textContent=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}
+
+// ---------- Eintragen ----------
+let form={};
+document.querySelectorAll('.stepper').forEach(el=>{
+  const f=el.dataset.f,max=+el.dataset.max;
+  el.innerHTML=`<button data-d="-1" aria-label="weniger">−</button><span class="v" id="v-${f}">–</span><button data-d="1" aria-label="mehr">+</button>`;
+  el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=+b.dataset.d;let v=form[f];
+    if(v==null)v=d>0?1:0;else v=Math.min(max,Math.max(0,v+d));form[f]=v;paintForm()});
+});
+$('f-gym').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v==='1';form.gym=(form.gym===v)?null:v;paintForm()});
+function paintForm(){
+  for(const f of ['prayers','energy','snus'])$('v-'+f).textContent=form[f]==null?'–':form[f];
+  $('f-gym').querySelectorAll('button').forEach(b=>b.classList.toggle('on',form.gym!=null&&(b.dataset.v==='1')===form.gym));
+}
+const fstr=v=>v==null?'':String(v).replace('.',',');
+function loadForm(){
+  const d=$('date').value||today(), e=data[d]||{};
+  form={prayers:e.prayers??null,energy:e.energy??null,snus:e.snus??null,gym:e.gym??null};
+  $('f-weight').value=fstr(e.weight);$('f-biceps').value=fstr(e.biceps);$('f-bf').value=fstr(e.bf);
+  if(e.biceps!=null||e.bf!=null)$('monthly').open=true;
+  const exists=!!data[d];$('delDay').hidden=!exists;$('save').textContent=exists?'Aktualisieren':'Speichern';
+  const prev=sorted().filter(k=>k<d&&data[k].weight!=null).pop();
+  $('lastW').textContent=prev?`zuletzt ${nf(data[prev].weight)} kg (${fmt(prev)})`:'morgens, nüchtern';
+  paintForm();
+}
+$('date').addEventListener('change',loadForm);
+$('save').onclick=()=>{
+  const d=$('date').value||today();
+  const w=num($('f-weight').value),bi=num($('f-biceps').value),bf=num($('f-bf').value);
+  if(Number.isNaN(w)||(w!=null&&(w<30||w>250)))return toast('Gewicht prüfen');
+  if(Number.isNaN(bi)||(bi!=null&&(bi<15||bi>70)))return toast('Bizeps prüfen');
+  if(Number.isNaN(bf)||(bf!=null&&(bf<2||bf>60)))return toast('Körperfett prüfen');
+  const e={weight:w,prayers:form.prayers,gym:form.gym,energy:form.energy,snus:form.snus,biceps:bi,bf:bf};
+  for(const k in e)if(e[k]==null)delete e[k];
+  if(!Object.keys(e).length){delete data[d];save();loadForm();return toast('Nichts eingetragen')}
+  data[d]=e;save();loadForm();toast('Gespeichert ✓');
+};
+$('delDay').onclick=()=>{const d=$('date').value;if(!data[d])return;if(!confirm('Eintrag vom '+fmtFull(d)+' löschen?'))return;delete data[d];save();loadForm();toast('Gelöscht')};
+function editDay(d){$('date').value=d;loadForm();show('add')}
+
+// ---------- Graphen ----------
+function lineChart(series,o={}){
+  const W=340,H=180,L=36,R=10,T=14,B=24;
+  const pts=series.flatMap(s=>s.points);
+  if(!pts.length)return '<div class="empty">Noch keine Daten in diesem Zeitraum</div>';
+  const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);if(o.goal!=null)ys.push(o.goal);
+  let x0=Math.min(...xs),x1=Math.max(...xs);if(x1-x0<DAY*6){const m=(x0+x1)/2;x0=m-DAY*3;x1=m+DAY*3}
+  let y0=Math.min(...ys),y1=Math.max(...ys);const p=(y1-y0)*.15||1;y0-=p;y1+=p;
+  const sx=x=>L+(x-x0)/(x1-x0)*(W-L-R),sy=y=>T+(1-(y-y0)/(y1-y0))*(H-T-B);
+  const dl=x=>{const d=new Date(x);return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'};
+  let s='';
+  for(let i=0;i<=3;i++){const v=y0+(y1-y0)*i/3,y=sy(v);s+=`<line x1="${L}" x2="${W-R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" class="grid"/><text x="${L-6}" y="${(y+3).toFixed(1)}" class="ax" text-anchor="end">${nf(v)}</text>`}
+  s+=`<text x="${L}" y="${H-6}" class="ax">${dl(x0)}</text><text x="${W-R}" y="${H-6}" class="ax" text-anchor="end">${dl(x1)}</text>`;
+  if(o.goal!=null){const y=sy(o.goal);s+=`<line x1="${L}" x2="${W-R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#f59e0b" stroke-dasharray="4 4" stroke-width="1.5"/><text x="${W-R}" y="${(y-5).toFixed(1)}" class="ax" text-anchor="end" style="fill:#f59e0b">${o.goalLabel||'Ziel'}</text>`}
+  for(const se of series){if(!se.points.length)continue;
+    const d=se.points.map((q,i)=>(i?'L':'M')+sx(q.x).toFixed(1)+' '+sy(q.y).toFixed(1)).join(' ');
+    s+=`<path d="${d}" fill="none" stroke="${se.color}" stroke-width="${se.width||2}" stroke-linejoin="round" stroke-linecap="round" opacity="${se.opacity||1}"/>`;
+    if(se.dots)s+=se.points.map(q=>`<circle cx="${sx(q.x).toFixed(1)}" cy="${sy(q.y).toFixed(1)}" r="${se.r||3}" fill="${se.color}" opacity="${se.opacity||1}"/>`).join('');
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" class="chart">${s}</svg>`;
+}
+function barChart(bars,o={}){
+  const W=340,H=180,L=36,R=10,T=16,B=24;
+  if(!bars.some(b=>b.value!=null))return '<div class="empty">Noch keine Daten in diesem Zeitraum</div>';
+  const vals=bars.map(b=>b.value||0);const max=Math.max(...vals,o.goal||0,o.max||0,1);
+  const n=bars.length,bw=(W-L-R)/n,base=H-B,sy=v=>T+(1-v/max)*(base-T);
+  let s='';
+  for(const v of [0,max/2,max]){const y=sy(v);s+=`<line x1="${L}" x2="${W-R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" class="grid"/><text x="${L-6}" y="${(y+3).toFixed(1)}" class="ax" text-anchor="end">${nf(v,0)}</text>`}
+  const k=Math.ceil(n/6);
+  bars.forEach((b,i)=>{const x=L+i*bw+bw*.16,w=Math.max(bw*.68,2);
+    if(b.value==null){s+=`<rect x="${x.toFixed(1)}" y="${base-2}" width="${w.toFixed(1)}" height="2" fill="#2a2e37"/>`}
+    else{const y=sy(b.value),c=o.colorFn?o.colorFn(b.value):o.color;
+      s+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(base-y,b.value>0?2:0).toFixed(1)}" rx="3" fill="${c}"/>`;
+      if(n<=12)s+=`<text x="${(x+w/2).toFixed(1)}" y="${(y-4).toFixed(1)}" class="vl" text-anchor="middle">${nf(b.value)}</text>`}
+    if(i%k===0||i===n-1&&n<=12)s+=`<text x="${(x+w/2).toFixed(1)}" y="${H-6}" class="ax" text-anchor="middle">${b.label}</text>`;
+  });
+  if(o.goal!=null){const y=sy(o.goal);s+=`<line x1="${L}" x2="${W-R}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#f59e0b" stroke-dasharray="4 4" stroke-width="1.5"/>`}
+  return `<svg viewBox="0 0 ${W} ${H}" class="chart">${s}</svg>`;
+}
+function weekly(field,start,mode){
+  const out=[];let m=mondayOf(start);const end=mondayOf(new Date());
+  while(m<=end){const vals=[];
+    for(let i=0;i<7;i++){const e=data[iso(addDays(m,i))];if(e&&e[field]!=null)vals.push(e[field])}
+    out.push({label:fmt(iso(m)),value:vals.length?(mode==='true'?vals.filter(Boolean).length:vals.reduce((a,b)=>a+b,0)):null});
+    m=addDays(m,7);
+  }
+  return out;
+}
+const card=(title,sub,body,legend='')=>`<div class="card pad"><div class="ctitle"><b>${title}</b><span>${sub}</span></div>${body}${legend}</div>`;
+
+let range=90;
+$('range').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;range=+b.dataset.r;
+  $('range').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));renderStats()});
+function rangeStart(){if(range)return addDays(parse(today()),-(range-1));const k=sorted()[0];return k?parse(k):parse(today())}
+
+function renderStats(){
+  $('hsub').textContent='Deine Entwicklung';
+  const start=rangeStart(),sIso=iso(start),keys=sorted();
+  // Woche
+  const wk=mondayOf(new Date());let pr=0,prDays=0,gym=0,en=0,sn=0;
+  for(let i=0;i<7;i++){const e=data[iso(addDays(wk,i))];if(!e)continue;
+    if(e.prayers!=null){pr+=e.prayers;prDays++}if(e.gym)gym++;en+=e.energy||0;sn+=e.snus||0}
+  // Gebetsserie
+  let streak=0;let d=parse(today());if(!(data[today()]&&data[today()].prayers===5))d=addDays(d,-1);
+  while(data[iso(d)]&&data[iso(d)].prayers===5){streak++;d=addDays(d,-1)}
+  // Gewicht
+  const wp=keys.filter(k=>data[k].weight!=null).map(k=>({k,x:parse(k).getTime(),y:data[k].weight}));
+  const avg=wp.map(p=>{const w=wp.filter(q=>q.x<=p.x&&q.x>p.x-7*DAY);return{k:p.k,x:p.x,y:w.reduce((a,b)=>a+b.y,0)/w.length}});
+  const wIn=wp.filter(p=>p.k>=sIso),aIn=avg.filter(p=>p.k>=sIso);
+  const lastW=wp.length?wp[wp.length-1].y:null;
+  const dW=aIn.length>1?aIn[aIn.length-1].y-aIn[0].y:null;
+
+  let h='<div class="stats">';
+  h+=`<div class="stat"><div class="k">⚖️ Gewicht</div><div class="val">${lastW!=null?nf(lastW)+' kg':'–'}</div><div class="d">${dW!=null?(dW>=0?'+':'')+nf(dW)+' kg im Zeitraum':'noch zu wenig Daten'}</div></div>`;
+  h+=`<div class="stat"><div class="k">🕌 Gebete diese Woche</div><div class="val ${prDays&&pr===prDays*5?'good':''}">${pr} / 35</div><div class="d">${streak?'🔥 '+streak+' Tage Serie (alle 5)':'Serie: 0 Tage'}</div></div>`;
+  h+=`<div class="stat"><div class="k">🏋️ Gym diese Woche</div><div class="val">${gym} Tage</div><div class="d">Montag bis Sonntag</div></div>`;
+  h+=`<div class="stat"><div class="k">⚡ Energy diese Woche</div><div class="val ${en<=GOALS.energy?'good':'bad'}">${en}</div><div class="d">Ziel: max. ${GOALS.energy}</div></div>`;
+  h+=`<div class="stat"><div class="k">🟫 Snus diese Woche</div><div class="val">${sn}</div><div class="d">Portionen</div></div>`;
+  const lb=keys.filter(k=>data[k].biceps!=null).pop();
+  h+=`<div class="stat"><div class="k">💪 Bizeps</div><div class="val">${lb?nf(data[lb].biceps)+' cm':'–'}</div><div class="d">Ziel: 38–39 cm</div></div>`;
+  h+='</div>';
+
+  h+=card('⚖️ Gewicht',lastW!=null?'Ziel 80–90 kg':'',lineChart([
+      {points:wIn,color:'#4ade80',dots:true,width:1,opacity:.45,r:2.5},
+      {points:aIn,color:'#4ade80',width:2.5}],{goal:GOALS.weight,goalLabel:GOALS.weightLabel}),
+    '<div class="legend"><span><i style="background:#4ade80;opacity:.45"></i>täglich</span><span><i style="background:#4ade80"></i>7-Tage-Schnitt</span></div>');
+  h+=card('🕌 Gebete pro Woche','von 35',barChart(weekly('prayers',start),{max:35,goal:GOALS.prayers,colorFn:v=>v>=35?'#4ade80':'#60a5fa'}));
+  h+=card('🏋️ Gym-Tage pro Woche','von 7',barChart(weekly('gym',start,'true'),{max:7,color:'#60a5fa'}));
+  h+=card('⚡ Energy Drinks pro Woche','Ziel: max. 1',barChart(weekly('energy',start),{goal:GOALS.energy,colorFn:v=>v<=GOALS.energy?'#4ade80':'#f87171'}));
+  h+=card('🟫 Snus pro Woche','Portionen',barChart(weekly('snus',start),{color:'#a78bfa'}));
+  const bp=keys.filter(k=>k>=sIso&&data[k].biceps!=null).map(k=>({x:parse(k).getTime(),y:data[k].biceps}));
+  h+=card('💪 Bizeps','cm, kalt',lineChart([{points:bp,color:'#60a5fa',dots:true}],{goal:GOALS.biceps,goalLabel:'Ziel 38 cm'}));
+  const fp=keys.filter(k=>k>=sIso&&data[k].bf!=null).map(k=>({x:parse(k).getTime(),y:data[k].bf}));
+  h+=card('📉 Körperfett','%',lineChart([{points:fp,color:'#f59e0b',dots:true}],{goal:GOALS.bf,goalLabel:'Obergrenze 12,5 %'}));
+  $('statsOut').innerHTML=h;
+}
+
+// ---------- Daten ----------
+function summary(e){const p=[];
+  if(e.weight!=null)p.push(nf(e.weight)+' kg');if(e.prayers!=null)p.push('🕌 '+e.prayers);
+  if(e.gym!=null)p.push(e.gym?'🏋️ ja':'🏋️ nein');if(e.energy!=null)p.push('⚡ '+e.energy);
+  if(e.snus!=null)p.push('🟫 '+e.snus);if(e.biceps!=null)p.push('💪 '+nf(e.biceps)+' cm');if(e.bf!=null)p.push(nf(e.bf)+' % KFA');
+  return p.join(' · ')}
+function renderData(){
+  const keys=sorted().reverse();
+  $('hsub').textContent=keys.length+(keys.length===1?' Tag':' Tage')+' eingetragen';
+  const lb=localStorage.getItem(KEY+'.lastBackup');const days=lb?Math.floor((Date.now()-+lb)/DAY):null;
+  let h=`<div class="card pad"><div class="ctitle"><b>💾 Backup</b><span class="${days==null||days>7?'warnbox':''}">${days==null?'noch nie':days===0?'heute':'vor '+days+(days===1?' Tag':' Tagen')}</span></div>
+  <div class="sub">Deine Daten liegen nur auf diesem iPhone. Mach regelmäßig ein Backup, z. B. in iCloud Drive.</div>
+  <button class="ghost" onclick="shareBackup()">Backup speichern / teilen</button>
+  <button class="ghost" onclick="copyMd()">Tabelle für Obsidian kopieren</button>
+  <button class="ghost" onclick="document.getElementById('importFile').click()">Backup laden</button></div>`;
+  h+='<div class="card">'+(keys.length?keys.map(k=>`<div class="entry" onclick="editDay('${k}')"><div><div class="dt">${parse(k).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'})}</div><div class="sm">${summary(data[k])}</div></div><span style="color:var(--muted)">›</span></div>`).join(''):'<div class="empty">Noch keine Einträge</div>')+'</div>';
+  $('dataOut').innerHTML=h;
+}
+async function shareBackup(){
+  const json=JSON.stringify(data,null,1),name='lifemax-backup-'+today()+'.json';
+  const file=new File([json],name,{type:'application/json'});
+  const done=()=>{localStorage.setItem(KEY+'.lastBackup',Date.now());renderData()};
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:'Life Max Backup'});done();return}catch(e){if(e.name==='AbortError')return}
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();a.remove();done();
+}
+function copyMd(){
+  const c=v=>v==null?'':String(v).replace('.',',');
+  let md='| Datum | Gewicht | Gebete | Gym | Energy | Snus | Bizeps | KFA |\n|---|---|---|---|---|---|---|---|\n';
+  for(const k of sorted()){const e=data[k];md+=`| ${fmtFull(k)} | ${c(e.weight)} | ${c(e.prayers)} | ${e.gym==null?'':e.gym?'✅':'❌'} | ${c(e.energy)} | ${c(e.snus)} | ${c(e.biceps)} | ${c(e.bf)} |\n`}
+  const fb=()=>{const t=document.createElement('textarea');t.value=md;document.body.appendChild(t);t.select();try{document.execCommand('copy');toast('Kopiert ✓')}catch(e){toast('Kopieren ging nicht')}t.remove()};
+  if(navigator.clipboard)navigator.clipboard.writeText(md).then(()=>toast('Kopiert, in Obsidian einfügen')).catch(fb);else fb();
+}
+$('importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;
+  f.text().then(t=>{const o=JSON.parse(t);let n=0;
+    for(const k in o)if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&o[k]&&typeof o[k]==='object'){data[k]={...data[k],...o[k]};n++}
+    save();toast(n+' Tage geladen');renderData()}).catch(()=>toast('Datei ungültig'));e.target.value=''});
+
+// ---------- Start ----------
+$('date').value=today();loadForm();paintSub();
+const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent);
+const standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+if(isIOS&&!standalone)$('installHint').hidden=false;
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tab==='add'&&!$('f-weight').value&&!data[$('date').value]){$('date').value=today();loadForm();paintSub()}});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
